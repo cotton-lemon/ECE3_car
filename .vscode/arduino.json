@@ -1,5 +1,5 @@
 {
-    "sketch": "blinktest.ino",
+    "sketch": "src\\blinktest.ino\\blinktest.ino",
     "board": "energia:msp432r:MSP-EXP432P401R",
     "output": ".\\build",
     "port": "COM13"
