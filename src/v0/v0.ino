@@ -2,6 +2,8 @@
 
 #include <ECE3.h> // Used for encoder functionality
 
+#define LED_BUILTIN 75
+
 uint16_t sensorValues[8];
 // Pin Assignments
 const int left_nslp_pin = 31;
@@ -27,7 +29,7 @@ const int minimum[8]={782,666,689,686,693,643,666,712};
 const float nomal[8]={1.718,1.834,1.811,1.814,1.806,1.857,1.834,1.788};
 // Prototypes
 int get_parameter();
-void change_spd(int sensor_fus);
+void changespeed(int sensor_fus);
 ///////////////////////////////////
 void setup() {
   //pin setting
@@ -56,18 +58,12 @@ void setup() {
 void loop() {
     int sensor_fus=get_parameter();
     changespeed(sensor_fus);
-
-   
-  
-  
-
 }
 
 
 int get_parameter(){
   ECE3_read_IR(sensorValues);
-  int sum;
-  sum=0;
+  int sum=0;
 //  Serial.print("raw values\n");
 //  for (unsigned char i = 0; i < 8; i++)
 //  {

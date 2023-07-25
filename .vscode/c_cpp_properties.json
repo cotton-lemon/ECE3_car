@@ -41,6 +41,7 @@
                 "C:\\Users\\sg\\AppData\\Local\\Arduino15\\packages\\energia\\hardware\\msp432r\\5.29.1\\system\\source\\third_party\\CMSIS\\Include",
                 "C:\\Users\\sg\\AppData\\Local\\Arduino15\\packages\\energia\\hardware\\msp432r\\5.29.1\\cores\\msp432r",
                 "C:\\Users\\sg\\AppData\\Local\\Arduino15\\packages\\energia\\hardware\\msp432r\\5.29.1\\variants\\MSP_EXP432P401R",
+                "C:\\Users\\sg\\Documents\\Arduino\\libraries\\ECE3\\src",
                 "c:\\users\\sg\\appdata\\local\\arduino15\\packages\\energia\\tools\\arm-none-eabi-gcc\\6.3.1-20170620\\arm-none-eabi\\include\\c++\\6.3.1",
                 "c:\\users\\sg\\appdata\\local\\arduino15\\packages\\energia\\tools\\arm-none-eabi-gcc\\6.3.1-20170620\\arm-none-eabi\\include\\c++\\6.3.1\\arm-none-eabi",
                 "c:\\users\\sg\\appdata\\local\\arduino15\\packages\\energia\\tools\\arm-none-eabi-gcc\\6.3.1-20170620\\arm-none-eabi\\include\\c++\\6.3.1\\backward",
