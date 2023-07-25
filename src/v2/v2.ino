@@ -1,6 +1,12 @@
-//simple discrete P version
+//simple PD version
+//stop when all white
+//ignore phantom
 
-#include <ECE3.h> // Used for encoder functionality
+
+//to do recovery algorithm
+
+
+#include <ECE3.h>
 
 #define LED_BUILTIN 75
 
@@ -13,23 +19,33 @@ const int right_pwm_pin=39;
 const int right_dir_pin=30;
 const int right_nslp_pin=11;
 
+// const int LED_RF        = 41;//?
+const int user_sw_2_pin=74;
+const int bump_sw_0_pin = 24;
 //parameters
 
-const int maximum_speed=50;
+// const int maximum_speed=50;
 const int base_speed=30;
-
+// const int change_speed_constant=5;
+const int Kp=1000;//P will be devided by Kp
+const float Kd=1;
 //global
 int leftSpd = base_speed;
 int rightSpd = base_speed;
+int preError=0;
+unsigned long preTime=0;
+char outCount=0;//for stop
+//for bumps;
+bool bump_sw_0_reading = digitalRead(bump_sw_0_pin);
 
-//char new_duty_cycle[4];
 //constants
 const int weights[8]={-15,-14,-12,-8,8,12,14,15};
 const int minimum[8]={782,666,689,686,693,643,666,712};
 const float nomal[8]={1.718,1.834,1.811,1.814,1.806,1.857,1.834,1.788};
 // Prototypes
 int get_parameter();
-void changespeed(int sensor_fus);
+void changeSpeed(int sensor_fus);
+
 ///////////////////////////////////
 void setup() {
   //pin setting
@@ -50,14 +66,22 @@ void setup() {
 
   Serial.begin(9600); // data rate for serial data transmission
   
-  delay(2000); //Wait 2 seconds before starting 
-  // analogWrite(left_pwm_pin,leftSpd);
-  // analogWrite(right_pwm_pin,rightSpd);
+  delay(50000); //Wait 5 seconds before starting 
+  preError=get_parameter();
+  preTime=millis();
+  analogWrite(left_pwm_pin,leftSpd);
+  analogWrite(right_pwm_pin,rightSpd);
 }
 
 void loop() {
-    int sensor_fus=get_parameter();
-    // changespeed(sensor_fus);
+  bump_sw_0_reading = digitalRead(bump_sw_0_pin);
+  if((not bump_sw_0_reading)||(outCount>5)){//exit
+    analogWrite(left_pwm_pin,0);
+    analogWrite(right_pwm_pin,0);
+    exit(0);//or just use the flag
+  }
+  int sensor_fus=get_parameter();
+  changeSpeed(sensor_fus);
 }
 
 
@@ -72,10 +96,25 @@ int get_parameter(){
 //  }
 //  Serial.println(); 
 //  Serial.print("sums\n");
+  int sensorSum=0;
+  char checkWhite=0;
   for (int i=0;i<8;++i){
+    if (sensorValues[i]<850){
+      checkWhite+=1;
+    }
+    sensorSum+=sensorValues[i];
     sum+=int((sensorValues[i]-minimum[i])/nomal[i])*weights[i];
 //     Serial.print(sum);
 //     Serial.print('\t');
+  }
+  if (sensorSum>16000){//2000*8
+    return preError;
+  }
+  if (checkWhite>7){
+    outCount+=1;
+  }
+  else{
+    outCount=0;
   }
   sum=sum/8;
   Serial.println(); 
@@ -84,28 +123,16 @@ int get_parameter(){
   return sum;
 }
 
-void changespeed(int sensorFuse){
-  if (sensorFuse>1500){
-    leftSpd=base_speed-15;
-    rightSpd =base_speed+15;
-  }
-  else if (sensorFuse>1000){
-    leftSpd=base_speed-10;
-    rightSpd =base_speed+10;
-  }
-  else if (sensorFuse>0){
-    leftSpd=base_speed-5;
-    rightSpd =base_speed+5;
-  }
-  else if(sensorFuse<-1000){
-    leftSpd=base_speed+10;
-    rightSpd =base_speed-10;
-  }
-  else{
-    leftSpd=base_speed+5;
-    rightSpd =base_speed-5;
-  }
+void changeSpeed(int error){
+  int change=error/Kp;//for p
+  unsigned long newtime=millis();
+  unsigned int deltaTime=newtime-preTime;
+  unsigned int deltaError=error-preError;
+  preTime=newtime;
+  preError=error;
+  change=int((error/Kp)+(deltaError/deltaTime)*Kd);
+  leftSpd=base_speed-change;
+  rightSpd=base_speed+change;
   analogWrite(left_pwm_pin,leftSpd);
   analogWrite(right_pwm_pin,rightSpd);
-  
 }
