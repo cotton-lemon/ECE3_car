@@ -1,4 +1,4 @@
-
+//simple discrete P version
 
 #include <ECE3.h> // Used for encoder functionality
 
