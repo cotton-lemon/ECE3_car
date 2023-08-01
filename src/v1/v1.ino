@@ -16,9 +16,9 @@ const int right_nslp_pin=11;
 //parameters
 
 // const int maximum_speed=50;
-const int base_speed=30;
+const int base_speed=50;
 // const int change_speed_constant=5;
-const int Kp=1000;//P will be devided by Kp
+const int Kp=44;//P will be devided by Kp
 const float Kd=1;
 //global
 int leftSpd = base_speed;
@@ -54,7 +54,7 @@ void setup() {
 
   Serial.begin(9600); // data rate for serial data transmission
   
-  delay(10000); //Wait 10 seconds before starting 
+  delay(2000); //Wait 10 seconds before starting 
   // preError=get_parameter();
   analogWrite(left_pwm_pin,leftSpd);
   analogWrite(right_pwm_pin,rightSpd);
@@ -83,9 +83,9 @@ int get_parameter(){
 //     Serial.print('\t');
   }
   sum=sum/8;
-  Serial.println(); 
-  Serial.print(sum);
-  Serial.println(); 
+  // Serial.println(); 
+  // Serial.print(sum);
+  // Serial.println(); 
   return sum;
 }
 

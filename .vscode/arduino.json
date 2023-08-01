@@ -1,5 +1,5 @@
 {
-    "sketch": "src\\v0\\v0.ino",
+    "sketch": "src\\v3\\v3.ino",
     "board": "energia:msp432r:MSP-EXP432P401R",
     "output": ".\\build",
     "port": "COM13"

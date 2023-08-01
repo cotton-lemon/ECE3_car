@@ -1,9 +1,9 @@
 //simple PD version
 //stop when all white
-//ignore phantom
+//ignore phantom //commented
 
 
-//to do recovery algorithm
+//to do slow start
 
 
 #include <ECE3.h>
@@ -25,10 +25,10 @@ const int bump_sw_0_pin = 24;
 //parameters
 
 // const int maximum_speed=50;
-const int base_speed=50;
+const int base_speed=255;
 // const int change_speed_constant=5;
-const int Kp=44;//P will be devided by Kp
-const int Kd=9;
+const int Kp=8;//P will be devided by Kp
+const float Kd=0.6375;//0.5*2
 //global
 int leftSpd = base_speed;
 int rightSpd = base_speed;
@@ -107,14 +107,6 @@ void loop() {
 int get_parameter(){
   ECE3_read_IR(sensorValues);
   int sum=0;
-//  Serial.print("raw values\n");
-//  for (unsigned char i = 0; i < 8; i++)
-//  {
-//    Serial.print(sensorValues[i]);
-//    Serial.print('\t'); // tab to format the raw data into columns in the Serial monitor
-//  }
-//  Serial.println(); 
-//  Serial.print("sums\n");
   // int sensorSum=0;
   char checkWhite=0;
   for (int i=0;i<8;++i){
@@ -136,9 +128,6 @@ int get_parameter(){
     outCount=0;
   }
   sum=sum/8;
-  // Serial.println(); 
-  // Serial.print(sum);
-  // Serial.println(); 
   return sum;
 }
 
@@ -151,8 +140,12 @@ void changeSpeed(int error){
     preDelta[i]=preDelta[i-1];
   }
   preError[0]=error;
-  //0.5 0.25 0.125 0.125
-  int Ichange=constrain(deltaError/Kd,-base_speed*0.8,base_speed*0.8);
+  preDelta[0]=deltaError;
+  float weighted=deltaError*0.35+preError[1]*0.25+preError[2]*0.2+preError[3]*0.2;
+  // float weighted=deltaError*0.5+preError[1]*0.25+preError[2]*0.125+preError[3]*0.125;
+  // 0.35 0.30 0.175 0.175
+  //0.35 0.25 0.2 0.2
+  int Ichange=constrain(weighted*Kd,-base_speed*0.8,base_speed*0.8);
   // preDelta[0]=Ichange;
   
   // change=int((error/Kp)+(deltaError)*Kd);

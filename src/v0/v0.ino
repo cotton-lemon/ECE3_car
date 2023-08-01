@@ -78,13 +78,72 @@ int get_parameter(){
 //     Serial.print('\t');
   }
   sum=sum/8;
-  Serial.println(); 
-  Serial.print(sum);
-  Serial.println(); 
+  // Serial.println(); 
+  // Serial.print(sum);
+  // Serial.println(); 
   return sum;
 }
 
+// void changespeed(int sensorFuse){
+//   if (sensorFuse>1500){
+//     leftSpd=base_speed-15;
+//     rightSpd =base_speed+15;
+//   }
+//   else if (sensorFuse>1000){
+//     leftSpd=base_speed-10;
+//     rightSpd =base_speed+10;
+//   }
+//   else if (sensorFuse>0){
+//     leftSpd=base_speed-5;
+//     rightSpd =base_speed+5;
+//   }
+//   else if(sensorFuse<-1500){
+//     leftSpd=base_speed+15;
+//     rightSpd =base_speed-15;
+//   }
+//   else if(sensorFuse<-1000){
+//     leftSpd=base_speed+10;
+//     rightSpd =base_speed-10;
+//   }
+//   else{
+//     leftSpd=base_speed+5;
+//     rightSpd =base_speed-5;
+//   }
+//   analogWrite(left_pwm_pin,leftSpd);
+//   analogWrite(right_pwm_pin,rightSpd);
+  
+// }
+
+
+// void changespeed(int sensorFuse){
+// // if (sensorFuse>1000){
+// //     leftSpd=base_speed-10;
+// //     rightSpd =base_speed+10;
+// //   }
+//   // else 
+//   if (sensorFuse>0){
+//     leftSpd=base_speed-5;
+//     rightSpd =base_speed+5;
+//   }
+//   // else if(sensorFuse<-1000){
+//   //   leftSpd=base_speed+10;
+//   //   rightSpd =base_speed-10;
+//   // }
+//   else{
+//     leftSpd=base_speed+5;
+//     rightSpd =base_speed-5;
+//   }
+//   analogWrite(left_pwm_pin,leftSpd);
+//   analogWrite(right_pwm_pin,rightSpd);
+  
+// }
+
+
 void changespeed(int sensorFuse){
+  if(sensorFuse>1900){
+    leftSpd=base_speed-20;
+    rightSpd=base_speed+20;
+  }
   if (sensorFuse>1500){
     leftSpd=base_speed-15;
     rightSpd =base_speed+15;
@@ -96,6 +155,14 @@ void changespeed(int sensorFuse){
   else if (sensorFuse>0){
     leftSpd=base_speed-5;
     rightSpd =base_speed+5;
+  }
+  else if(sensorFuse<-1900){
+    leftSpd=base_speed+20;
+    rightSpd =base_speed-20;
+  }
+  else if(sensorFuse<-1500){
+    leftSpd=base_speed+15;
+    rightSpd =base_speed-15;
   }
   else if(sensorFuse<-1000){
     leftSpd=base_speed+10;
