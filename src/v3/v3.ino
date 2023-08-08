@@ -2,7 +2,9 @@
 //stop when all white
 //ignore phantom //commented
 
-
+//initial speed slow
+//detect center//change sensor fus
+//
 //to do slow start
 
 
@@ -25,10 +27,10 @@ const int bump_sw_0_pin = 24;
 //parameters
 
 // const int maximum_speed=50;
-const int base_speed=255;
+const int base_speed=100;
 // const int change_speed_constant=5;
-const int Kp=8;//P will be devided by Kp
-const float Kd=0.6375;//0.5*2
+const int Kp=22;//P will be devided by Kp
+const float Kd=1/9;//0.5*2
 //global
 int leftSpd = base_speed;
 int rightSpd = base_speed;

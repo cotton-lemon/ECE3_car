@@ -2,7 +2,9 @@
 //stop when all white
 //ignore phantom //commented
 
-
+//initial speed slow
+//detect center//change sensor fus
+//
 //to do slow start
 
 
@@ -19,7 +21,7 @@ const int right_pwm_pin=39;
 const int right_dir_pin=30;
 const int right_nslp_pin=11;
 
-const int LED_RF        = 41;
+// const int LED_RF        = 41;//?
 const int user_sw_2_pin=74;
 const int bump_sw_0_pin = 24;
 //parameters
@@ -28,16 +30,13 @@ const int bump_sw_0_pin = 24;
 const int base_speed=50;
 // const int change_speed_constant=5;
 const int Kp=44;//P will be devided by Kp
-const float Kd=1/9;
+const float Kd=1/9;//0.5*2
 //global
 int leftSpd = base_speed;
 int rightSpd = base_speed;
 int preError[4]={0,0,0,0};
 int preDelta[4]={0,0,0,0};
 char outCount=0;//for stop
-
-int stored[1000]={0,};
-int gcount=0;
 //for bumps;
 bool bump_sw_0_reading = digitalRead(bump_sw_0_pin);
 
@@ -48,7 +47,7 @@ const float nomal[8]={1.718,1.834,1.811,1.814,1.806,1.857,1.834,1.788};
 // Prototypes
 int get_parameter();
 void changeSpeed(int sensor_fus);
-void end();
+
 ///////////////////////////////////
 void setup() {
   //pin setting
@@ -79,26 +78,80 @@ void setup() {
 }
 
 void loop() {
-  if((outCount>5)){//exit]
-    end();
+  // bump_sw_0_reading = digitalRead(bump_sw_0_pin);
+  // if((not bump_sw_0_reading)||(outCount>5)){//exit
+  //   analogWrite(left_pwm_pin,0);
+  //   analogWrite(right_pwm_pin,0);
+  //   exit(0);//or just use the flag
+  // }
+  if((outCount>5)){//exit
+    analogWrite(left_pwm_pin,50);
+    analogWrite(right_pwm_pin,50);
+    delay(100);
+    analogWrite(left_pwm_pin,40);
+    analogWrite(right_pwm_pin,40);
+    delay(100);
+    analogWrite(left_pwm_pin,30);
+    analogWrite(right_pwm_pin,30);
+    delay(100);
+    analogWrite(left_pwm_pin,20);
+    analogWrite(right_pwm_pin,20);
+    delay(100);
+    analogWrite(left_pwm_pin,0);
+    analogWrite(right_pwm_pin,0);
+    exit(0);//or just use the flag
   }
   int sensor_fus=get_parameter();
   changeSpeed(sensor_fus);
-  stored[gcount]=sensor_fus;
-  ++gcount;
 }
 
 
 int get_parameter(){
   ECE3_read_IR(sensorValues);
   int sum=0;
+  // int sensorSum=0;
   char checkWhite=0;
+  bool iswhite[8]={0,};
   for (int i=0;i<8;++i){
-    if (sensorValues[i]<850){
-      checkWhite+=1;
+
+
+  }
+  for (int i=0;i<8;++i){//nomarlize
+    sensorValues[i]=int((sensorValues[i]-minimum[i])/nomal[i])*weights[i];
+    if (sensorValues[i]<500){
+      checkWhite+=1;//for stop
+      iswhite[i]=1;
     }
-    // sensorSum+=sensorValues[i];
-    sum+=int((sensorValues[i]-minimum[i])/nomal[i])*weights[i];
+  }
+  // bool firstwhites[5]={0,};
+  // char whitenum=0;
+  // if(iswhite[0]==1){
+  //   firstwhites[0]=0;
+  //   whitenum+=1;
+  // }
+  // for (int i=1;i<8;++i){
+  //   if ((iswhite[i]==1)&&(iswhite[i-1]==0)){
+  //     firstwhites[whitenum]=i;
+  //     whitenum+=1;
+  //   }
+  // }
+  // if (whitenum==2){
+  //   for(int i=0;i<firstwhites[0];++i){
+  //     sensorValues[i]=0;
+  //   }
+  //   for(int i=firstwhites[1];i<8;++i){
+  //     sensorValues[i]=0;
+  //   }
+  // }
+
+
+  //check w b w
+
+  for(int i=0;i<8;++i){
+    sum+=sensorValues[i];
+  }
+
+
   if (checkWhite>7){
     outCount+=1;
   }
@@ -107,7 +160,6 @@ int get_parameter(){
   }
   sum=sum/8;
   return sum;
-}
 }
 
 void changeSpeed(int error){
@@ -135,25 +187,4 @@ void changeSpeed(int error){
   rightSpd=base_speed+change;
   analogWrite(left_pwm_pin,leftSpd);
   analogWrite(right_pwm_pin,rightSpd);
-}
-
-void end(){
-  for (int speed=base_speed;speed>0;speed-=10){
-    analogWrite(left_pwm_pin,speed);
-    analogWrite(right_pwm_pin,speed);
-    delay(200);
-  }
-  analogWrite(left_pwm_pin,0);
-  analogWrite(right_pwm_pin,0);
-  digitalWrite(LED_RF,HIGH);
-  while(true){
-    if(!digitalRead(PUSH1)){
-      digitalWrite(LED_RF,LOW);
-      for(int i=0;i<1500;++i){
-        Serial.println(stored[i]);
-      }
-      break;
-    }
-  }
-  exit(0);//or just use the flag
 }

@@ -123,8 +123,8 @@ int get_parameter(){
     }
     // sensorSum+=sensorValues[i];
     sum+=int((sensorValues[i]-minimum[i])/nomal[i])*weights[i];
-//     Serial.print(sum);
-//     Serial.print('\t');
+    Serial.print(sum);
+    Serial.print('\t');
   }
   // if (sensorSum>16000){//2000*8
   //   return preError;
